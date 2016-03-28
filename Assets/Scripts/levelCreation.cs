@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class levelCreation : MonoBehaviour
@@ -14,14 +15,34 @@ public class levelCreation : MonoBehaviour
     private GameObject gameLayer;
     private GameObject bgLayer;
 
-    private float gameSpeed = 4.0f;
+    public float gameSpeed = 4.0f;
     private float autofbounceX;
     private int blankCounter = 0;
     private int middleCounter = 0;
     private string lastTile = "right";
-    private float startTime;
 
-    
+    public Text scoreTxt;
+    public Text moneyTxt;
+    static public int score;
+    public float scoreMultiply = 0.5f;
+    public float _score;
+
+    private int timer = 5;
+
+    private bool bonusAdded = false;
+    public Transform BonusLucky;
+    public Transform BonusMoney;
+    public int RandomBonus;
+
+    private bool enemyAdded = false;
+    public Transform Enemy1;
+    public Transform Enemy2;
+    public Transform Enemy3;
+    public int RandomEnemy;
+
+
+    private bool lose;
+
     void Awake()
     {
         Application.targetFrameRate = 60;
@@ -31,7 +52,8 @@ public class levelCreation : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        
+        score = 0;
+
         gameLayer = GameObject.Find("gameLayer");
         bgLayer = GameObject.Find("backgroundLayer");
         collectedTiles = GameObject.Find("tiles");
@@ -48,20 +70,43 @@ public class levelCreation : MonoBehaviour
             tmpG4.transform.parent = collectedTiles.transform.FindChild("gBlank").transform;
         }
 
-        collectedTiles.transform.position = new Vector2(-60.0f, -20.0f);
+        for (int i = 0; i < 10; i++)
+
+        {
+
+            GameObject tmpG5 = Instantiate(Resources.Load("enemy1", typeof(GameObject))) as GameObject;
+            tmpG5.transform.parent = collectedTiles.transform.FindChild("enemy1").transform;
+            tmpG5.transform.position = Vector2.zero;
+
+            GameObject tmpG6 = Instantiate(Resources.Load("enemy2", typeof(GameObject))) as GameObject;
+            tmpG6.transform.parent = collectedTiles.transform.FindChild("enemy2").transform;
+            tmpG6.transform.position = Vector2.zero;
+
+            GameObject tmpG7 = Instantiate(Resources.Load("enemy3", typeof(GameObject))) as GameObject;
+            tmpG7.transform.parent = collectedTiles.transform.FindChild("enemy3").transform;
+            tmpG7.transform.position = Vector2.zero;
+
+        }
+
+
+        collectedTiles.transform.position = new Vector2(-40.0f, -20.0f);
         tilePos = GameObject.Find("startTilePosition");
         startUpPosY = tilePos.transform.position.y;
-        autofbounceX = tilePos.transform.position.x - 5.0f;
+        autofbounceX = tilePos.transform.position.x - 2.0f;
 
         fillScene();
-        startTime = Time.time;
     }
+
 
     void FixedUpdate()
     {
-        if (startTime - Time.time % 5 == 0)
+
+        if ((int)Time.timeSinceLevelLoad == timer)
         {
             gameSpeed += 0.5f;
+            scoreMultiply += 0.02f;
+            timer += 5;
+
         }
 
         gameLayer.transform.position = new Vector2(gameLayer.transform.position.x - gameSpeed * Time.deltaTime, 0);
@@ -70,7 +115,7 @@ public class levelCreation : MonoBehaviour
         foreach (Transform child in gameLayer.transform)
         {
             if (child.position.x < autofbounceX)
-            { 
+            {
                 switch (child.gameObject.name)
                 {
                     case "ground_left(Clone)":
@@ -89,6 +134,18 @@ public class levelCreation : MonoBehaviour
                         child.gameObject.transform.position = collectedTiles.transform.FindChild("gBlank").transform.position;
                         child.gameObject.transform.parent = collectedTiles.transform.FindChild("gBlank").transform;
                         break;
+                    case "enemy1(Clone)":
+                        child.gameObject.transform.position = collectedTiles.transform.FindChild("enemy1").transform.position;
+                        child.gameObject.transform.parent = collectedTiles.transform.FindChild("enemy1").transform;
+                        break;
+                    case "enemy2(Clone)":
+                        child.gameObject.transform.position = collectedTiles.transform.FindChild("enemy2").transform.position;
+                        child.gameObject.transform.parent = collectedTiles.transform.FindChild("enemy2").transform;
+                        break;
+                    case "enemy3(Clone)":
+                        child.gameObject.transform.position = collectedTiles.transform.FindChild("enemy3").transform.position;
+                        child.gameObject.transform.parent = collectedTiles.transform.FindChild("enemy3").transform;
+                        break;
                     default:
                         Destroy(child.gameObject);
                         break;
@@ -97,24 +154,44 @@ public class levelCreation : MonoBehaviour
             }
         }
 
-        if (gameLayer.transform.childCount < 25)
+        if (gameLayer.transform.childCount < 30)
             spawnTile();
     }
 
     private void fillScene()
     {
-        for (int i = 0; i < 7; i++)
+        for (int i = 0; i < 5; i++)
         {
             setTile("middle");
         }
         setTile("right");
     }
 
+    void OnTriggerEnter2D()
+    {
+        if (GetComponent<Collider2D>().gameObject.tag == "lose")
+            Application.LoadLevel("Game over");
+        //lose = true;
+    }
+
+
+
     // Update is called once per frame
     void Update()
     {
 
+        //if (lose)
+        // Application.LoadLevel("Game over");
+
+        //_score += scoreMultiply;
+        //score = (int)_score;
+        //scoreTxt.text = "Score " + score.ToString();
+        //moneyTxt.text = "Money " + player.money.ToString();
+
+
     }
+
+
 
 
 
@@ -134,10 +211,16 @@ public class levelCreation : MonoBehaviour
             case "blank":
                 tmpTile = collectedTiles.transform.FindChild("gBlank").transform.GetChild(1).gameObject;
                 break;
+            case "coin":
+                tmpTile = collectedTiles.transform.FindChild("bonusM").transform.GetChild(1).gameObject;
+                break;
+            case "lucky":
+                tmpTile = collectedTiles.transform.FindChild("bonusS").transform.GetChild(1).gameObject;
+                break;
         }
 
         tmpTile.transform.parent = gameLayer.transform;
-        tmpTile.transform.position = new Vector2(tilePos.transform.position.x + (tileWidth), startUpPosY + (heightLevel * tileWidth));
+        tmpTile.transform.position = new Vector2(tilePos.transform.position.x + (tileWidth) + 1.52f, startUpPosY + (heightLevel * tileWidth));
         tilePos = tmpTile;
         lastTile = type;
     }
@@ -154,28 +237,33 @@ public class levelCreation : MonoBehaviour
         {
             setTile("middle");
             middleCounter--;
+            randomizeBonus();
+            randomizeEnemy();
             return;
         }
+        bonusAdded = false;
+        enemyAdded = false;
+
         if (lastTile == "blank")
         {
             changeHeight();
             setTile("left");
-            middleCounter = (int)Random.Range(1,8);
+            middleCounter = (int)Random.Range(1, 4);
         }
         else if (lastTile == "right")
         {
-            blankCounter = (int)Random.Range(2,4);
+            blankCounter = (int)Random.Range(2, 3);
         }
         else if (lastTile == "middle")
         {
             setTile("right");
         }
-        
+
     }
 
     private void changeHeight()
     {
-        int newHeightLevel = (int)Random.Range(0,4);
+        int newHeightLevel = (int)Random.Range(0, 4);
         if (newHeightLevel < heightLevel)
             heightLevel--;
         else if (newHeightLevel > heightLevel)
@@ -183,4 +271,64 @@ public class levelCreation : MonoBehaviour
     }
 
 
+    private void randomizeBonus()
+    {
+
+        if (bonusAdded)
+            return;
+        if (Random.Range(1, 5) == 1)
+        {
+            bonusAdded = true;
+            {
+                RandomBonus = Random.Range(1, 3);
+                if (RandomBonus == 1)
+                {
+                    var _bonusMoney = Instantiate(BonusMoney) as Transform;
+                    _bonusMoney.transform.position = new Vector2(tilePos.transform.position.x + tileWidth, startUpPosY + (heightLevel + tileWidth + (tileWidth + 2)));
+                    _bonusMoney.transform.parent = gameLayer.transform;
+                }
+                if (RandomBonus == 2)
+                {
+                    var _bonusLucky = Instantiate(BonusLucky) as Transform;
+                    _bonusLucky.transform.position = new Vector2(tilePos.transform.position.x + tileWidth, startUpPosY + (heightLevel + tileWidth + (tileWidth + 2)));
+                    _bonusLucky.transform.parent = gameLayer.transform;
+                }
+            }
+        }
+    }
+
+    private void randomizeEnemy()
+    {
+        if (enemyAdded)
+            return;
+        if ((int)Random.Range(0, 5) == 1)
+        {
+            enemyAdded = true;
+            {
+                RandomEnemy = Random.Range(1, 4);
+                if (RandomEnemy == 1)
+                {
+                    GameObject newEnemy = collectedTiles.transform.FindChild("enemy1").transform.GetChild(0).gameObject;
+                    newEnemy.transform.parent = gameLayer.transform;
+                    newEnemy.transform.position = new Vector2(tilePos.transform.position.x + tileWidth, startUpPosY + (heightLevel * tileWidth + (tileWidth + 0.9f)));
+                    enemyAdded = true;
+                }
+                if (RandomEnemy == 2)
+                {
+                    GameObject newEnemy = collectedTiles.transform.FindChild("enemy2").transform.GetChild(0).gameObject;
+                    newEnemy.transform.parent = gameLayer.transform;
+                    newEnemy.transform.position = new Vector2(tilePos.transform.position.x + tileWidth, startUpPosY + (heightLevel * tileWidth + (tileWidth + 0.8f)));
+                    enemyAdded = true;
+                }
+                if (RandomEnemy == 3)
+                {
+                    GameObject newEnemy = collectedTiles.transform.FindChild("enemy3").transform.GetChild(0).gameObject;
+                    newEnemy.transform.parent = gameLayer.transform;
+                    newEnemy.transform.position = new Vector2(tilePos.transform.position.x + tileWidth, startUpPosY + (heightLevel * tileWidth + (tileWidth + 0.85f)));
+                    enemyAdded = true;
+                }
+
+            }
+        }
+    }
 }

@@ -1,0 +1,13 @@
+C:\Users\User\Documents\Runner 2D\Temp\bin\Debug\Assembly-CSharp.dll
+C:\Users\User\Documents\Runner 2D\Temp\bin\Debug\Assembly-CSharp.pdb
+C:\Users\User\Documents\Runner 2D\Temp\bin\Debug\UnityEditor.dll
+C:\Users\User\Documents\Runner 2D\Temp\bin\Debug\UnityEngine.dll
+C:\Users\User\Documents\Runner 2D\Temp\bin\Debug\UnityEngine.UI.dll
+C:\Users\User\Documents\Runner 2D\Temp\bin\Debug\Mono.Cecil.dll
+C:\Users\User\Documents\Runner 2D\Temp\bin\Debug\Unity.SerializationLogic.dll
+C:\Users\User\Documents\Runner 2D\Temp\bin\Debug\Unity.DataContract.dll
+C:\Users\User\Documents\Runner 2D\Temp\bin\Debug\ICSharpCode.NRefactory.dll
+C:\Users\User\Documents\Runner 2D\Temp\bin\Debug\Unity.CecilTools.dll
+C:\Users\User\Documents\Runner 2D\obj\Debug\Assembly-CSharp-vs.csprojResolveAssemblyReference.cache
+C:\Users\User\Documents\Runner 2D\obj\Debug\Assembly-CSharp.dll
+C:\Users\User\Documents\Runner 2D\obj\Debug\Assembly-CSharp.pdb

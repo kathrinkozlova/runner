@@ -4,15 +4,17 @@ using System.Collections;
 public class inputController : MonoBehaviour
 {
 
-    private bool isMobile = true;
+   
     public player _player;
     public static bool isPlayerJump;
+    private bool isMobail = true;
+   
 
 
     // Use this for initialization
     void Start() {
         if (Application.isEditor)
-            isMobile = false;
+            isMobail = false;
         _player = GameObject.Find("Player").GetComponent<player>();
  
 	}
@@ -20,7 +22,8 @@ public class inputController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isMobile)
+
+        if (isMobail)
         {
             int tmpC = Input.touchCount;
             tmpC--;
@@ -28,31 +31,28 @@ public class inputController : MonoBehaviour
             if (Input.GetTouch(tmpC).phase == TouchPhase.Began)
             {
                 handleInteraction(true);
-              
             }
             if (Input.GetTouch(tmpC).phase == TouchPhase.Ended)
             {
                 handleInteraction(false);
-             
             }
         }
         else
-        {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                handleInteraction(true);
-             
+
+                           if ((player.isJump == false) & (Input.GetKeyDown(KeyCode.Space)))
+                {
+                    handleInteraction(true);
+
+                }
+
+                else
+                {
+                    handleInteraction(false);
+
+                }
             }
 
-            else
-            {
-                handleInteraction(false);
-
-            }
-              }
-
-  
-    }
+        
 
     void handleInteraction(bool starting)
     {
