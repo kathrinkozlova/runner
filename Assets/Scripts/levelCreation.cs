@@ -183,10 +183,10 @@ public class levelCreation : MonoBehaviour
         //if (lose)
         // Application.LoadLevel("Game over");
 
-        //_score += scoreMultiply;
-        //score = (int)_score;
-        //scoreTxt.text = "Score " + score.ToString();
-        //moneyTxt.text = "Money " + player.money.ToString();
+        _score += scoreMultiply;
+        score = (int)_score;
+        scoreTxt.text = "Score " + score.ToString();
+        moneyTxt.text = "Money " + player.money.ToString();
 
 
     }
